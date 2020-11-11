@@ -1,6 +1,7 @@
 module RN
   module Commands
     module Notes
+	
       class Create < Dry::CLI::Command
         desc 'Create a note'
 
@@ -15,7 +16,22 @@ module RN
 
         def call(title:, **options)
           book = options[:book]
-          warn "TODO: Implementar creación de la nota con título '#{title}' (en el libro '#{book}').\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          title = title.gsub(/[^0-9A-Za-z.\-_ ]/, '')
+          if book.nil?
+			file = File.new(File.join(BOOKS_PATH, "global",title),"w")
+			stuf = STDIN.gets.chomp
+			file.puts(stuf)
+			file.close
+			puts(title + " fue creado con exito")
+		  elsif File.exists?(File.join(BOOKS_PATH,book,title))
+			file = File.new(File.join(BOOKS_PATH, book,title),"w")
+			stuf = STDIN.gets.chomp
+			file.puts(stuf)
+			file.close
+			puts(title + " fue creado con exito")
+		  else
+			puts("Libro " + book + " no existe")
+		  end
         end
       end
 
@@ -33,7 +49,19 @@ module RN
 
         def call(title:, **options)
           book = options[:book]
-          warn "TODO: Implementar borrado de la nota con título '#{title}' (del libro '#{book}').\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          if book.nil?
+			if File.exists?(File.join(BOOKS_PATH,"global",title))
+			  File.delete(File.join(BOOKS_PATH,"global",title))
+			  puts("%s fue borrado" %[title])
+			else
+			  puts("No existe este archivo")
+			end
+		  elsif File.exists?(File.join(BOOKS_PATH,book,title))
+			File.delete(File.join(BOOKS_PATH,book,title))
+			puts("%s fue borrado" %[title])
+		  else
+			puts("No existe este archivo")
+		  end
         end
       end
 
@@ -51,7 +79,21 @@ module RN
 
         def call(title:, **options)
           book = options[:book]
-          warn "TODO: Implementar modificación de la nota con título '#{title}' (del libro '#{book}').\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          if book.nil? and File.exists?(File.join(BOOKS_PATH,"global",title))
+			file = File.open(File.join(BOOKS_PATH, "global",title),"w")
+			stuf = STDIN.gets.chomp
+			file.puts(stuf)
+			file.close
+			puts(title + " fue editado con exito")
+		  elsif File.exists?(File.join(BOOKS_PATH,book,title))
+			file = File.open(File.join(BOOKS_PATH, book,title),"w")
+			stuf = STDIN.gets.chomp
+			file.puts(stuf)
+			file.close
+			puts(title + " fue editado con exito")
+		  else
+			puts("No existe el archivo")
+		  end
         end
       end
 
@@ -69,8 +111,21 @@ module RN
         ]
 
         def call(old_title:, new_title:, **options)
+          new_title = new_title.gsub(/[^0-9A-Za-z.\-_ ]/, '')
           book = options[:book]
-          warn "TODO: Implementar cambio del título de la nota con título '#{old_title}' hacia '#{new_title}' (del libro '#{book}').\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          if book.nil?
+			if File.exists?(File.join(BOOKS_PATH,"global",old_title))
+			  FileUtils.mv(File.join(BOOKS_PATH,"global",old_title),File.join(BOOKS_PATH,"global",new_title))
+			  puts("Nombre cambiado exitosamente")
+			else
+			  puts("No existe este archivo")
+			end
+		  elsif File.exists?(File.join(BOOKS_PATH,book,old_title))
+			FileUtils.mv(File.join(BOOKS_PATH,book,old_title),File.join(BOOKS_PATH,book,new_title))
+			puts("Nombre cambiado exitosamente")
+		  else
+			puts("No existe este archivo")
+		  end
         end
       end
 
@@ -108,7 +163,15 @@ module RN
 
         def call(title:, **options)
           book = options[:book]
-          warn "TODO: Implementar vista de la nota con título '#{title}' (del libro '#{book}').\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          if book.nil? and File.exists?(File.join(BOOKS_PATH,"global",title))
+            stuf =File.read(File.join(BOOKS_PATH,"global",title))
+            puts(stuf)
+          elsif File.exists?(File.join(BOOKS_PATH,book,title))
+			stuf = File.read(File.join(BOOKS_PATH,book,tilte))
+			puts(stuf)
+		  else
+			puts("No existe el archivo")
+		  end
         end
       end
     end

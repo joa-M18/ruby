@@ -1,7 +1,8 @@
 module RN
   module Commands
     module Books
-      class Create < Dry::CLI::Command
+	  
+	  class Create < Dry::CLI::Command
         desc 'Create a book'
 
         argument :name, required: true, desc: 'Name of the book'
@@ -12,7 +13,13 @@ module RN
         ]
 
         def call(name:, **)
-          warn "TODO: Implementar creación del cuaderno de notas con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          name = name.gsub(/[^0-9A-Za-z.\-_ ]/, '') 
+          if File.exists?(File.join(BOOKS_PATH,name))
+			puts("Este libro ya existe")
+		  else
+			Dir.mkdir(File.join(BOOKS_PATH,name))
+			puts(name + " fue creado exitosamente")
+		  end
         end
       end
 
@@ -30,7 +37,30 @@ module RN
 
         def call(name: nil, **options)
           global = options[:global]
-          warn "TODO: Implementar borrado del cuaderno de notas con nombre '#{name}' (global=#{global}).\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          if global
+			Dir.entries(File.join(BOOKS_PATH,"global")).each do |file|
+			  begin
+				File.delete(File.join(BOOKS_PATH,"global",file))
+				puts(file + " fue eliminado")
+			  rescue
+			  end
+			end
+			puts("Libro global vacio")
+		  else
+			if(File.exists?(File.join(BOOKS_PATH,name)))
+				Dir.entries(File.join(BOOKS_PATH,name)).each do |file|
+				  begin
+					File.delete(File.join(BOOKS_PATH,name,file))
+					puts(file + " fue eliminado")
+				  rescue
+				  end
+				end
+				Dir.delete(File.join(BOOKS_PATH,name))
+				puts("Libro %s borrado" %[name])
+			else
+			  puts("no existe")
+			end
+		  end
         end
       end
 
@@ -42,7 +72,7 @@ module RN
         ]
 
         def call(*)
-          warn "TODO: Implementar listado de los cuadernos de notas.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+		  puts(Dir.entries(BOOKS_PATH))
         end
       end
 
@@ -59,7 +89,8 @@ module RN
         ]
 
         def call(old_name:, new_name:, **)
-          warn "TODO: Implementar renombrado del cuaderno de notas con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          new_name = new_name.gsub(/[^0-9A-Za-z.\-_ ]/, '')
+          FileUtils.mv(File.join(BOOKS_PATH,old_name),File.join(BOOKS_PATH,new_name)) if File.exists?(File.join(BOOKS_PATH,old_name))
         end
       end
     end
