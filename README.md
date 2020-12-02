@@ -1,111 +1,111 @@
-# rn
+RN -- V1.2.0
 
-Plantilla para comenzar con el Trabajo Práctico Integrador de la cursada 2020 de la materia
-Taller de Tecnologías de Producción de Software - Opción Ruby, de la Facultad de Informática
-de la Universidad Nacional de La Plata.
+Comandos:
 
-Ruby Notes, o simplemente `rn`, es un gestor de notas concebido como un clon simplificado
-de la excelente herramienta [TomBoy](https://wiki.gnome.org/Apps/Tomboy).
+#Parten de $ruby bin/rn
 
-Este proyecto es simplemente una plantilla para comenzar a implementar la herramienta e
-intenta proveer un punto de partida para el desarrollo, simplificando el _bootstrap_ del
-proyecto que puede ser una tarea que consume mucho tiempo y conlleva la toma de algunas
-decisiones que pueden tener efectos tanto positivos como negativos en el proyecto.
+-Version:
+	#version	//aliases ['v','-v','--version']
+		imprime la version del programa
 
-## Uso de `rn`
-
-Para ejecutar el comando principal de la herramienta se utiliza el script `bin/rn`, el cual
-puede correrse de las siguientes manera:
-
-```bash
-$ ruby bin/rn [args]
-```
-
-O bien:
-
-```bash
-$ bundle exec bin/rn [args]
-```
-
-O simplemente:
-
-```bash
-$ bin/rn [args]
-```
-
-Si se agrega el directorio `bin/` del proyecto a la variable de ambiente `PATH` de la shell,
-el comando puede utilizarse sin prefijar `bin/`:
-
-```bash
-# Esto debe ejecutarse estando ubicad@ en el directorio raiz del proyecto, una única vez
-# por sesión de la shell
-$ export PATH="$(pwd)/bin:$PATH"
-$ rn [args]
-```
-
-> Notá que para la ejecución de la herramienta, es necesario tener una versión reciente de
-> Ruby (2.5 o posterior) y tener instaladas sus dependencias, las cuales se manejan con
-> Bundler. Para más información sobre la instalación de las dependencias, consultar la
-> siguiente sección ("Desarrollo").
-
-Documentar el uso para usuarios finales de la herramienta queda fuera del alcance de esta
-plantilla y **se deja como una tarea para que realices en tu entrega**, pisando el contenido
-de este archivo `README.md` o bien en uno nuevo. Ese archivo deberá contener cualquier
-documentación necesaria para entender el funcionamiento y uso de la herramienta que hayas
-implementado, junto con cualquier decisión de diseño del modelo de datos que consideres
-necesario documentar.
-
-## Desarrollo
-
-Esta sección provee algunos tips para el desarrollo de tu entrega a partir de esta
-plantilla.
-
-### Instalación de dependencias
-
-Este proyecto utiliza Bundler para manejar sus dependencias. Si aún no sabés qué es eso
-o cómo usarlo, no te preocupes: ¡lo vamos a ver en breve en la materia! Mientras tanto,
-todo lo que necesitás saber es que Bundler se encarga de instalar las dependencias ("gemas")
-que tu proyecto tenga declaradas en su archivo `Gemfile` al ejecutar el siguiente comando:
-
-```bash
-$ bundle install
-```
-
-> Nota: Bundler debería estar disponible en tu instalación de Ruby, pero si por algún
-> motivo al intentar ejecutar el comando `bundle` obtenés un error indicando que no se
-> encuentra el comando, podés instalarlo mediante el siguiente comando:
->
-> ```bash
-> $ gem install bundler
-> ```
-
-Una vez que la instalación de las dependencias sea exitosa (esto deberías hacerlo solamente
-cuando estés comenzando con la utilización del proyecto), podés comenzar a probar la
-herramienta y a desarrollar tu entrega.
-
-### Estructura de la plantilla
-
-El proyecto te provee una estructura inicial en la cual podés basarte para implementar tu
-entrega. Esta estructura no es necesariamente rígida, pero tené en cuenta que modificarla
-puede requerir algún trabajo adicional de tu parte.
-
-* `lib/`: directorio que contiene todas las clases del modelo y de soporte para la ejecución
-  del programa `bin/rn`.
-  * `lib/rn.rb` es la declaración del namespace `RN`, y las directivas de carga de clases
-    o módulos que estén contenidos directamente por éste (`autoload`).
-  * `lib/rn/` es el directorio que representa el namespace `RN`. Notá la convención de que
-    el uso de un módulo como namespace se refleja en la estructura de archivos del proyecto
-    como un directorio con el mismo nombre que el archivo `.rb` que define el módulo, pero
-    sin la terminación `.rb`. Dentro de este directorio se ubicarán los elementos del
-    proyecto que estén bajo el namespace `RN` - que, también por convención y para facilitar
-    la organización, deberían ser todos. Es en este directorio donde deberías ubicar tus
-    clases de modelo, módulos, clases de soporte, etc. Tené en cuenta que para que todo
-    funcione correctamente, seguramente debas agregar nuevas directivas de carga en la
-    definición del namespace `RN` (o dónde corresponda, según tus decisiones de diseño).
-  * `lib/rn/commands.rb` y `lib/rn/commands/*.rb` son las definiciones de comandos de
-    `dry-cli` que se utilizarán. En estos archivos es donde comenzarás a realizar la
-    implementación de las operaciones en sí, que en esta plantilla están provistas como
-    simples disparadores.
-  * `lib/rn/version.rb` define la versión de la herramienta, utilizando [SemVer](https://semver.org/lang/es/).
-* `bin/`: directorio donde reside cualquier archivo ejecutable, siendo el más notorio `rn`
-  que se utiliza como punto de entrada para el uso de la herramienta.
+-Config:
+	#save_folder [**arg]
+		##Proximamente
+-Books: 
+books //aliases['b']
+El libro por defecto se llama global y este no puede ser eliminado ni modificado
+	#create [**arg]
+		-Recive como argumento un titulo de libro y lo crea
+		-Debe ser un nombre que este disponible
+		example [
+        		'"My book" # Creates a new book named "My book"',
+        		'Memoires  # Creates a new book named "Memoires"'
+        		]
+	#delete [**arg]
+		-Recive como argumento un titulo de un libro, si existe es
+		eliminado
+		-Si recive 
+		example [
+	          '--global  # Deletes all notes from the global book',
+	          '"My book" # Deletes a book named "My book" and all of its notes',
+	          'Memoires  # Deletes a book named "Memoires" and all of its notes'
+	        ]
+	#list
+		-Lista todos los libros
+		example [
+                    # Lists every available book'
+        	]
+	#rename [**arg]
+		-Recive un nombre viejo(debe existir) y nombre nuevo (disponible)
+		para una libro
+		example [
+         	 '"My book" "Our book"         # Renames the book "My book" to "Our book"',
+         	 'Memoires Memories            # Renames the book "Memoires" to "Memories"',
+         	 '"TODO - Name this book" Wiki # Renames the book "TODO - Name this book" to "Wiki"'
+        	]
+-Notes: 
+notes //aliases['n']
+El ingreso de datos se termina ingresando una linea con solo '%END%'
+	#create [**arg]
+		-Recibe el nombre de una nota y opcionalmente el libro al que
+		pertenesca, ambas deben ser validas y crea la nota
+		example [
+  		   'todo                        # Creates a note titled "todo" in the global book',
+    		   '"New note" --book "My book" # Creates a note titled "New note" in the book "My book"',
+   		   'thoughts --book Memoires    # Creates a note titled "thoughts" in the book "Memoires"'
+   		]
+	#delete [**arg]
+		-Recibe el nombre de una nota y opcionalmente el libro al que
+		pertenece, ambas deben ser validas y elimina la nota
+		example [
+   		       'todo                        # Deletes a note titled "todo" from the global book',
+   		       '"New note" --book "My book" # Deletes a note titled "New note" from the book "My book"',
+        	       'thoughts --book Memoires    # Deletes a note titled "thoughts" from the book "Memoires"'
+  	        ]	
+	#retitle [**arg]
+		--Recibe nombre viejo y nuevo de una nota y opcionalmente el libro al 
+		que pertenece, ambas deben ser validas, y actualiza el nombre
+		example [
+        	  'todo TODO                                 # Changes the title of the note titled "todo" from the global book to "TODO"',
+     		  '"New note" "Just a note" --book "My book" # Changes the title of the note titled "New note" from the book "My book" to "Just a note"',
+          	  'thoughts thinking --book Memoires         # Changes the title of the note titled "thoughts" from the book "Memoires" to "thinking"'
+        	]
+	#edit [**arg]
+		-Recibe el nombre de una nota y opcionalmente el libro al que
+		pertenece, ambas deben ser validas, y edita la nota
+		example [
+	          'todo                        # Edits a note titled "todo" from the global book',
+	          '"New note" --book "My book" # Edits a note titled "New note" from the book "My book"',
+	          'thoughts --book Memoires    # Edits a note titled "thoughts" from the book "Memoires"'
+		]
+	#list[**arg]
+		-Puede recibir nombre de un libro o el argumento del libro global, y
+		lista sus notas, listando todas si no hay argumentos
+		example [
+	          '                 # Lists notes from all books (including the global book)',
+          	  '--global         # Lists notes from the global book',
+          	  '--book "My book" # Lists notes from the book named "My book"',
+          	  '--book Memoires  # Lists notes from the book named "Memoires"'
+        	]
+	#show[**arg]
+		-Recibe el nombre de una nota y opcionalmente un libro al que
+		pertenece, estos deben ser validos y muestra el contenido de la nota
+		example [
+         	 'todo                        # Shows a note titled "todo" from the global book',
+         	 '"New note" --book "My book" # Shows a note titled "New note" from the book "My book"',
+         	 'thoughts --book Memoires    # Shows a note titled "thoughts" from the book "Memoires"'
+        	]
+-Export: 
+export //aliases['e']
+Utiliza gema redcarpet para convertir a html texto formateado en Markdown
+	#to_html [**arg]
+		-Puede recibir un titulo de libro y uno de nota, exportando a html
+		las notas correspondientes, todas en caso de no haber parametros
+	example [
+  	  '								#Export all notes to HTML'
+	  '--book libro1					#Export all notes in "libro1" to HTML'
+	  '--title titulo1				#Export note "titulo1" from global to HTML'
+	  '--book libro1 --title titulo1	#Export note "titulo1" from book "libro1" to HTML'
+	]
+	#to_pdf [**arg]
+		##proximamente

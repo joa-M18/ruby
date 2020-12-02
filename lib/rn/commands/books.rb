@@ -18,7 +18,7 @@ module RN
 			puts("Este libro ya existe")
 		  else
 			Dir.mkdir(File.join(BOOKS_PATH,name))
-			puts(name + " fue creado exitosamente")
+			puts("\"" + name + "\" fue creado exitosamente")
 		  end
         end
       end
@@ -46,20 +46,26 @@ module RN
 			  end
 			end
 			puts("Libro global vacio")
-		  else
+		  elsif (name)
 			if(File.exists?(File.join(BOOKS_PATH,name)))
-				Dir.entries(File.join(BOOKS_PATH,name)).each do |file|
-				  begin
-					File.delete(File.join(BOOKS_PATH,name,file))
-					puts(file + " fue eliminado")
-				  rescue
-				  end
+				if(name == "global")
+					puts("Libro global protegido, para borrar su contenido usar --global")
+				else
+					Dir.entries(File.join(BOOKS_PATH,name)).each do |file|
+					  begin
+						File.delete(File.join(BOOKS_PATH,name,file))
+						puts(file + " fue eliminado")
+					  rescue
+					  end
+					end
+					Dir.delete(File.join(BOOKS_PATH,name))
+					puts("Libro \"%s\" borrado" %[name])
 				end
-				Dir.delete(File.join(BOOKS_PATH,name))
-				puts("Libro %s borrado" %[name])
 			else
-			  puts("no existe")
+			  puts("Libro %s no existe" %[name])
 			end
+		  else
+			puts("Debe ingresar nombre de libro")
 		  end
         end
       end
@@ -72,7 +78,7 @@ module RN
         ]
 
         def call(*)
-		  puts(Dir.entries(BOOKS_PATH))
+		  puts(Dir.entries(BOOKS_PATH)[2..])
         end
       end
 
@@ -89,8 +95,19 @@ module RN
         ]
 
         def call(old_name:, new_name:, **)
-          new_name = new_name.gsub(/[^0-9A-Za-z.\-_ ]/, '')
-          FileUtils.mv(File.join(BOOKS_PATH,old_name),File.join(BOOKS_PATH,new_name)) if File.exists?(File.join(BOOKS_PATH,old_name))
+			if(not File.exists?(File.join(BOOKS_PATH,old_name)))
+				puts("Libro %s no existe" %[old_name])
+			elsif (not File.exists?(File.join(BOOKS_PATH,new_name)))
+				if(old_name != "global")
+					new_name = new_name.gsub(/[^0-9A-Za-z.\-_ ]/, '')
+					old_name = old_name.gsub(/[^0-9A-Za-z.\-_ ]/, '')
+					FileUtils.mv(File.join(BOOKS_PATH,old_name),File.join(BOOKS_PATH,new_name)) if File.exists?(File.join(BOOKS_PATH,old_name))
+				else
+					puts("Libro global no puede cambiarse")
+				end
+			else
+				puts("Libro %s ya existe" %[new_name])
+			end
         end
       end
     end

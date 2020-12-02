@@ -1,5 +1,5 @@
 module RN
-  BOOKS_PATH = File.join(Dir.pwd,".my_rns")
+  BOOKS_PATH = File.join(File.expand_path('~'),".my_rns")
 	  
   autoload :VERSION, 'rn/version'
   autoload :Commands, 'rn/commands'

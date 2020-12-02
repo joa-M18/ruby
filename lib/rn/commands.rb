@@ -3,6 +3,7 @@ module RN
     autoload :Books, 'rn/commands/books'
     autoload :Notes, 'rn/commands/notes'
     autoload :Version, 'rn/commands/version'
+    autoload :Export, 'rn/commands/export'
 
     extend Dry::CLI::Registry
 
@@ -22,6 +23,10 @@ module RN
       prefix.register 'show', Notes::Show
     end
 
+	register 'export', aliases: ['e'] do |prefix|
+	  prefix.register 'to_html', Export::To_html
+	end
+	
     register 'version', Version, aliases: ['v', '-v', '--version']
   end
 end
