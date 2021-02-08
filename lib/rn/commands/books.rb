@@ -1,7 +1,9 @@
 module RN
   module Commands
     module Books
-	  
+	
+	require_relative '../Models/Book'
+	require_relative '../Models/Note'
 	  class Create < Dry::CLI::Command
         desc 'Create a book'
 
@@ -13,12 +15,10 @@ module RN
         ]
 
         def call(name:, **)
-          name = name.gsub(/[^0-9A-Za-z.\-_ ]/, '') 
-          if File.exists?(File.join(BOOKS_PATH,name))
-			puts("Este libro ya existe")
-		  else
-			Dir.mkdir(File.join(BOOKS_PATH,name))
+          if RN::Models::Book::Book.create(name)
 			puts("\"" + name + "\" fue creado exitosamente")
+		  else
+			puts ("nombre "+ name + " ya esta en uso")
 		  end
         end
       end
@@ -38,35 +38,16 @@ module RN
         def call(name: nil, **options)
           global = options[:global]
           if global
-			Dir.entries(File.join(BOOKS_PATH,"global")).each do |file|
-			  begin
-				File.delete(File.join(BOOKS_PATH,"global",file))
-				puts(file + " fue eliminado")
-			  rescue
-			  end
-			end
-			puts("Libro global vacio")
-		  elsif (name)
-			if(File.exists?(File.join(BOOKS_PATH,name)))
-				if(name == "global")
-					puts("Libro global protegido, para borrar su contenido usar --global")
-				else
-					Dir.entries(File.join(BOOKS_PATH,name)).each do |file|
-					  begin
-						File.delete(File.join(BOOKS_PATH,name,file))
-						puts(file + " fue eliminado")
-					  rescue
-					  end
-					end
-					Dir.delete(File.join(BOOKS_PATH,name))
-					puts("Libro \"%s\" borrado" %[name])
-				end
+			RN::Models::Book::Book.empty_global
+          elsif(name)
+			if RN::Models::Book::Book.delete(name)
+				puts (name+" borrado existosamente")
 			else
-			  puts("Libro %s no existe" %[name])
+				puts "nombre invalido"
 			end
-		  else
-			puts("Debe ingresar nombre de libro")
-		  end
+          else
+			puts "Debe ingresar nombre"
+          end
         end
       end
 
@@ -78,7 +59,7 @@ module RN
         ]
 
         def call(*)
-		  puts(Dir.entries(BOOKS_PATH)[2..])
+		  RN::Models::Book::Book.list
         end
       end
 
@@ -95,18 +76,10 @@ module RN
         ]
 
         def call(old_name:, new_name:, **)
-			if(not File.exists?(File.join(BOOKS_PATH,old_name)))
-				puts("Libro %s no existe" %[old_name])
-			elsif (not File.exists?(File.join(BOOKS_PATH,new_name)))
-				if(old_name != "global")
-					new_name = new_name.gsub(/[^0-9A-Za-z.\-_ ]/, '')
-					old_name = old_name.gsub(/[^0-9A-Za-z.\-_ ]/, '')
-					FileUtils.mv(File.join(BOOKS_PATH,old_name),File.join(BOOKS_PATH,new_name)) if File.exists?(File.join(BOOKS_PATH,old_name))
-				else
-					puts("Libro global no puede cambiarse")
-				end
+			if RN::Models::Book::Book.rename(old_name,new_name)
+				puts "Nombre cambiado con exito"
 			else
-				puts("Libro %s ya existe" %[new_name])
+				puts "Opracion invalida"
 			end
         end
       end

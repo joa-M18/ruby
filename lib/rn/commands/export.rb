@@ -2,6 +2,7 @@ module RN
 	module Commands
 		module Export
 			require 'redcarpet'
+			require_relative '../Models/Note'
 			
 			class To_html < Dry::CLI::Command
 				desc 'Export to html'
@@ -15,17 +16,13 @@ module RN
 				
 				option :book, type: :string, desc: 'Book name'
 				option :title, type: :string, desc: 'note title'
-				def exp(path,name)
-					if File.exists?(path)
-						file = File.new(File.join(File.expand_path("../../..",path),name + ".html"),"w")
-						txt = File.read(path)
-						stuf = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(txt)
-						file.puts(stuf)
-						file.close
-						puts("%s se ha exportado a formato HTML" %[name])
-					else
-						puts("%s no existe"%[name])
-					end
+				def exp(note)
+					file = File.new(File.join(File.expand_path("../",BOOKS_PATH),note.book + " - "+ note.title + ".html"),"w")
+					puts(note.to_string)
+					stuf = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(note.content)
+					file.puts(stuf)
+					file.close
+					puts("%s se ha exportado a formato HTML" %[note.title])
 				end
 				
 				
@@ -33,20 +30,28 @@ module RN
 					book = options[:book]
 					title = options[:title]
 					if book.nil? and title.nil?
-						Dir.entries(BOOKS_PATH)[2..].each do |libro|
-							Dir.entries(File.join(BOOKS_PATH,libro))[2..].each do |nota|
-								exp(File.join(BOOKS_PATH,libro,nota),libro + " - " + nota)
+						Dir.entries(BOOKS_PATH)[2..].each do |file|
+							book = RN::Models::Book::Book.new(file)
+							book.notes.each do |name|
+								note = RN::Models::Note::Note.new(name,file)
+								exp(note)
 							end
 						end
-					elsif book.nil?
-						exp(File.join(BOOKS_PATH,"global",title),"global - " + title)
 					else
+						if book.nil?
+							book = 'global'
+						end
 						if title.nil?
-							Dir.entries(File.join(BOOKS_PATH,book))[2..].each do |nota|
-								exp(File.join(BOOKS_PATH,book,nota),book + " - " + nota)
+							RN::Models::Book::Book.new(book).notes.each do |title|
+								exp(RN::Models::Note::Note.new(title,book))
 							end
 						else
-							exp(File.join(BOOKS_PATH,book,title),book + " - " + title)
+							note = RN::Models::Note::Note.new(title,book)
+							if note.exist?
+								exp(note)
+							else
+								puts "Nota no existente"
+							end
 						end
 					end
 				end
