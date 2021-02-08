@@ -4,4 +4,4 @@ ruby '>= 2.5'
 
 gem 'dry-cli', '~> 0.6'
 
-gem 'redcarpet', '3.5.0'
+gem 'redcarpet', '3.5.1'
